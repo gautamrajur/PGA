@@ -6,7 +6,7 @@ import numpy as np
 import operator
 class Organism:
     def __init__(self, partition_length):
-        self.partition = np.random.randint(2, size=(partition_length))     
+        self.partition = np.random.randint(2, size=(partition_length))
         self.fitness = None
 
 class Population(Organism):
@@ -14,7 +14,7 @@ class Population(Organism):
     Creates a class population that has the attributes of:
             Population Size  - Population of Genetic Algorithm
             partition Length - How many "things" are in the partition
-            organism         - A list of organism that have inharitance from 
+            organism         - A list of organism that have inharitance from
                                Class Organism
     """
     def __init__(self, population_size, partition_length):
@@ -25,6 +25,9 @@ class Population(Organism):
 
         
 def Min_Fitness(population):
+    """
+    Calculates Min Fitness of that generation of the population    
+    """
     min_fitness = population.organism[1].fitness    
     for ii in range(population.population_size):
         if (population.organism[ii].fitness != None):
@@ -34,7 +37,12 @@ def Min_Fitness(population):
 #    population.min_fitness = min_fitness
 #    return 
 
-def Fitness(population,partition ):
+def Fitness(population, partition ):
+    '''
+    Fitness Function of the Genetic Algorithm
+    If Checks partition array and adds up total value in each bin 
+    Difference in the Bin number is the partition array 
+    '''
     for ii in range(population.population_size):
         Bin1 = 0
         Bin2 = 0
@@ -45,13 +53,21 @@ def Fitness(population,partition ):
                 Bin2 = Bin2 + partition[jj]
         population.organism[ii].fitness =  abs(Bin1-Bin2)
                 
-def Natrual_Selection(population,NUM2KILL):
+def Natrual_Selection(population, NUM2KILL):
+    '''
+    "kills" the lowest two performing organism by making their
+    fitness and partition None    
+    '''
     population.organism.sort(key=operator.attrgetter('fitness'))
     for ii in range(NUM2KILL):
         population.organism[-ii-1].fitness = None
         population.organism[-ii-1].partition = None
 
 def Mating(population):
+    '''
+    Mates two 'successful' genes by taking the first half of genes from one parent
+    and the second half from the second parent
+    '''
     parent1 = 1
     parent2 = 2
     if (population.population_size % 2 == 0):#Even Population Size
@@ -68,6 +84,9 @@ def Mating(population):
             parent2 = parent2 + 1
         
 def Mutation(population):
+    '''
+    Randomly will mutate a gene from a parents offspring before their fitness is tested
+    '''
     for ii in range(population.population_size):
         if (population.organism[ii].fitness == None)&(np.random.rand(1) > 0.9):
             rand_index = int(np.random.rand(1)*population.partition_length)
